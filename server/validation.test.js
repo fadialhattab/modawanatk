@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {postInput,authInput} from './validation.js';
+test('post content is trimmed and restricted to editable fields',()=>{assert.deepEqual(postInput({title:' عنوان ',body:' نص ',author:'forged'}),{title:'عنوان',body:'نص'})});
+test('invalid and oversized posts are rejected',()=>{for(const value of [null,{}, {title:12,body:'x'},{title:' ',body:'x'},{title:'x',body:'x'.repeat(5001)}])assert.throws(()=>postInput(value))});
+test('email normalization and registration validation',()=>{assert.equal(authInput({name:' فادي ',email:'FADI@example.com ',password:'password123'},true).email,'fadi@example.com');assert.throws(()=>authInput({email:{$ne:null},password:'password123'}));assert.throws(()=>authInput({name:'',email:'a@b.com',password:'password123'},true))});
